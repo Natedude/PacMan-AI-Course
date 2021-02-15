@@ -1,0 +1,2 @@
+# CSC 665 AI
+ CSC 665 AI SFSU Spring 2021
