@@ -157,6 +157,8 @@ class Search:
                     print(str(pos) + " added to discoveryMap with values: (" +
                         str(currentState) + ", " + str(action) + ")")
                     self.frontier.push(pos)
+                else:
+                    print(str(pos) + " NOT ADDED - already in discoveryMap")
             print()
 
         print("No goal found :-(")
@@ -168,13 +170,11 @@ class Search:
 
     def path(self, pos):
         p = []
-        print("path while")
         while pos != self.start:
             parent, action = self.discoveryMap[pos]
             p.insert(0, action)
-            print("pos now == " + str(parent))
-            print("Path: " + str(p))
             pos = parent
+        print("Path: " + str(p))
         return p
 
 class Node:
