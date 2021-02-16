@@ -140,9 +140,9 @@ class Search:
 
             #check if goal
             if self.problem.isGoalState(currentState):
-                print("Goal found!!! :-) ")
-                print("####################################")
-                pprint.pprint(self.discoveryMap)
+                print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
+                print("####################################\n")
+                #pprint.pprint(self.discoveryMap)
                 return self.path(currentState)
 
             successors = self.problem.getSuccessors(currentState)
@@ -174,7 +174,7 @@ class Search:
             parent, action = self.discoveryMap[pos]
             p.insert(0, action)
             pos = parent
-        print("Path: " + str(p))
+        print("Path: \n" + str(p) + "\n")
         return p
 
 class Node:
