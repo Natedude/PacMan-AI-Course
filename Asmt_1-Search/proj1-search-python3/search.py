@@ -27,6 +27,9 @@ n = Directions.NORTH
 e = Directions.EAST
 stop = Directions.STOP
 
+from game import Actions
+import pprint
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -96,44 +99,89 @@ def depthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 
     frontier = util.Stack()
-    return search(problem, frontier)
+    s = Search(problem, frontier)
+    return s.search()
 
+class Search:
+    v2d = staticmethod(Actions.vectorToDirection)
 
-@staticmethod
-def search(problem, frontier):
-    # dict[state] = parent state at time of added to frontier
-    discoveryMap = {}
-    # list of nodes visited
-    discovered = []
+    def __init__(self, problem, frontier) -> None:
+        self.problem = problem
+        self.frontier = frontier
 
-    start = problem.getStartState()
-    frontier.push(start)
-    #discoveryMap[start] = start     # root points to self in discoveryMap
+        print("Start:", problem.getStartState())
+        self.start = problem.getStartState()
+        frontier.push(self.start)
 
-    while not frontier.isEmpty():
-        currentState = frontier.pop()
+        # dict[(x,y)] = ( parent (x,y) when discovered, action used to discover)
+        self.discoveryMap = {}
+        # list of nodes visited
+        self.explored = []
 
-        if currentState in discovered:
-            continue
-        discovered.append(currentState)
+    def pop(self):
+        return self.frontier.pop()
 
-        if problem.isGoalState(currentState):
-            #return path using discoveryMap
-            #TODO return path()
-            pass
+    def push(self, item, num = None):
+        if num == None:
+            self.frontier.push(item)
+        else:
+            self.frontier.push(item, num)
 
-        actions = currentState.getLegalPacmanActions()
-        for a in actions:
-            childState = currentState.generatePacmanSuccessor(a)
-            discoveryMap[childState] = currentState
-            frontier.push(childState)
+    def search(self):
+        while not self.frontier.isEmpty():
+            currentState = self.frontier.pop()
+            print("Popped: " + str(currentState) + " " + str(type(currentState)))
 
-    print("No goal found :-(")
-    return stop
+            # check is already explored
+            if currentState in self.explored:
+                print()
+                continue
+            self.explored.append(currentState)
 
-@staticmethod
-def path():
-    pass
+            #check if goal
+            if self.problem.isGoalState(currentState):
+                print("Goal found!!! :-) ")
+                print("####################################")
+                pprint.pprint(self.discoveryMap)
+                return self.path(currentState)
+
+            successors = self.problem.getSuccessors(currentState)
+            print("Successors: ")
+            #print(successors)
+            #print()
+            for suc in successors:
+                pos, action, cost = suc
+                if pos not in self.discoveryMap.keys():
+                    self.discoveryMap[pos] = (currentState, action)
+                    #print suc added to disc
+                    print(str(pos) + " added to discoveryMap with values: (" +
+                        str(currentState) + ", " + str(action) + ")")
+                    self.frontier.push(pos)
+            print()
+
+        print("No goal found :-(")
+        print("####################################")
+        return stop
+
+    def explore(self):
+        pass
+
+    def path(self, pos):
+        p = []
+        print("path while")
+        while pos != self.start:
+            parent, action = self.discoveryMap[pos]
+            p.insert(0, action)
+            print("pos now == " + str(parent))
+            print("Path: " + str(p))
+            pos = parent
+        return p
+
+class Node:
+    def __init__(self, data) -> None:
+        self.data = data
+        self.children = []
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
