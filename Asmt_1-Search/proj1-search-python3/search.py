@@ -27,7 +27,6 @@ n = Directions.NORTH
 e = Directions.EAST
 stop = Directions.STOP
 
-from game import Actions
 import pprint
 
 class SearchProblem:
@@ -102,8 +101,38 @@ def depthFirstSearch(problem):
     s = Search(problem, frontier)
     return s.search()
 
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    frontier = util.Queue()
+    s = Search(problem, frontier)
+    return s.search()
+
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
+
+def nullHeuristic(state, problem=None):
+    """
+    A heuristic function estimates the cost from the current state to the nearest
+    goal in the provided SearchProblem.  This heuristic is trivial.
+    """
+    return 0
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first."""
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
+
+
+# Abbreviations
+bfs = breadthFirstSearch
+dfs = depthFirstSearch
+astar = aStarSearch
+ucs = uniformCostSearch
+
 class Search:
-    v2d = staticmethod(Actions.vectorToDirection)
 
     def __init__(self, problem, frontier) -> None:
         self.problem = problem
@@ -154,7 +183,7 @@ class Search:
                 if pos not in self.discoveryMap.keys():
                     self.discoveryMap[pos] = (currentState, action)
                     #print suc added to disc
-                    print(str(pos) + " added to discoveryMap with values: (" +
+                    print(str(pos) + " added to discoveryMap with values:\n (" +
                         str(currentState) + ", " + str(action) + ")")
                     self.frontier.push(pos)
                 else:
@@ -176,38 +205,3 @@ class Search:
             pos = parent
         print("Path: \n" + str(p) + "\n")
         return p
-
-class Node:
-    def __init__(self, data) -> None:
-        self.data = data
-        self.children = []
-
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
-def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
-def nullHeuristic(state, problem=None):
-    """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
-    """
-    return 0
-
-def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
-
-# Abbreviations
-bfs = breadthFirstSearch
-dfs = depthFirstSearch
-astar = aStarSearch
-ucs = uniformCostSearch
