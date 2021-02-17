@@ -111,7 +111,9 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    s = Search(problem, frontier)
+    return s.search(ucs=True)
 
 def nullHeuristic(state, problem=None):
     """
@@ -140,7 +142,11 @@ class Search:
 
         print("Start:", problem.getStartState())
         self.start = problem.getStartState()
-        frontier.push(self.start)
+
+        if ucs:
+            self.frontier.push(self.start, 0)
+        else:
+            self.frontier.push(self.start)
 
         # dict[(x,y)] = ( parent (x,y) when discovered, action used to discover)
         self.discoveryMap = {}
@@ -156,7 +162,7 @@ class Search:
         else:
             self.frontier.push(item, num)
 
-    def search(self):
+    def search(self, ucs = False):
         while not self.frontier.isEmpty():
             currentState = self.frontier.pop()
             print("Popped: " + str(currentState) + " " + str(type(currentState)))
@@ -181,11 +187,14 @@ class Search:
             for suc in successors:
                 pos, action, cost = suc
                 if pos not in self.discoveryMap.keys():
-                    self.discoveryMap[pos] = (currentState, action)
+                    self.discoveryMap[pos] = (currentState, action, cost)
                     #print suc added to disc
                     print(str(pos) + " added to discoveryMap with values:\n (" +
                         str(currentState) + ", " + str(action) + ")")
-                    self.frontier.push(pos)
+                    if ucs:
+                        self.frontier.push(pos, cost)
+                    else:
+                        self.frontier.push(pos)
                 else:
                     print(str(pos) + " NOT ADDED - already in discoveryMap")
             print()
@@ -197,7 +206,7 @@ class Search:
     def path(self, pos):
         p = []
         while pos != self.start:
-            parent, action = self.discoveryMap[pos]
+            parent, action, cost = self.discoveryMap[pos]
             p.insert(0, action)
             pos = parent
         print("Path: \n" + str(p) + "\n")
