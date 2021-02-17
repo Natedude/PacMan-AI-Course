@@ -194,9 +194,6 @@ class Search:
         print("####################################")
         return stop
 
-    def explore(self):
-        pass
-
     def path(self, pos):
         p = []
         while pos != self.start:
