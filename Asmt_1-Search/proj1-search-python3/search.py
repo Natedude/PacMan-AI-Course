@@ -112,19 +112,23 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    s = Search(problem, frontier)
-    return s.search(ucs=True)
+    s = Search(problem, frontier, isUCS=True)
+    return s.search()
 
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
+    print("Null Heuristic - Returning 0")
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    h = heuristic(problem.getStartState(), problem)
+
+    print("Heuristic: " + str(h))
     util.raiseNotDefined()
 
 
@@ -136,14 +140,15 @@ ucs = uniformCostSearch
 
 class Search:
 
-    def __init__(self, problem, frontier) -> None:
+    def __init__(self, problem, frontier, isUCS = False) -> None:
         self.problem = problem
         self.frontier = frontier
+        self.isUCS = isUCS
 
         print("Start:", problem.getStartState())
         self.start = problem.getStartState()
 
-        if ucs:
+        if isUCS:
             self.frontier.push(self.start, 0)
         else:
             self.frontier.push(self.start)
@@ -162,7 +167,7 @@ class Search:
         else:
             self.frontier.push(item, num)
 
-    def search(self, ucs = False):
+    def search(self):
         while not self.frontier.isEmpty():
             currentState = self.frontier.pop()
             print("Popped: " + str(currentState) + " " + str(type(currentState)))
@@ -191,7 +196,7 @@ class Search:
                     #print suc added to disc
                     print(str(pos) + " added to discoveryMap with values:\n (" +
                         str(currentState) + ", " + str(action) + ")")
-                    if ucs:
+                    if self.isUCS:
                         self.frontier.push(pos, cost)
                     else:
                         self.frontier.push(pos)
