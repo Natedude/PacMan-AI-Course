@@ -129,7 +129,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     h = heuristic(problem.getStartState(), problem)
 
     print("Heuristic: " + str(h))
-    util.raiseNotDefined()
+
+    frontier = util.PriorityQueue()
+    s = Search(problem, frontier, isUCS=True, heuristic=heuristic)
+    return s.search()
 
 
 # Abbreviations
@@ -140,10 +143,11 @@ ucs = uniformCostSearch
 
 class Search:
 
-    def __init__(self, problem, frontier, isUCS = False) -> None:
+    def __init__(self, problem, frontier, isUCS = False, heuristic=nullHeuristic) -> None:
         self.problem = problem
         self.frontier = frontier
         self.isUCS = isUCS
+        self.heuristic = heuristic
 
         print("Start:", problem.getStartState())
         self.start = problem.getStartState()
@@ -186,8 +190,9 @@ class Search:
                 return self.path(currentState)
 
             successors = self.problem.getSuccessors(currentState)
+
             print("Successors: ")
-            #print(successors)
+            #print(str(type(successors)))
             #print()
             for suc in successors:
                 pos, action, cost = suc
@@ -197,7 +202,7 @@ class Search:
                     print(str(pos) + " added to discoveryMap with values:\n (" +
                         str(currentState) + ", " + str(action) + ")")
                     if self.isUCS:
-                        self.frontier.push(pos, cost)
+                        self.frontier.push(pos, cost + self.heuristic(pos,self.problem))
                     else:
                         self.frontier.push(pos)
                 else:
