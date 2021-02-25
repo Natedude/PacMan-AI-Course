@@ -377,30 +377,15 @@ def cornersHeuristic(state, problem):
 
     "*** YOUR CODE HERE ***"
     currentPosition , cpVisited = state
-
-    cpNeeded = []
-    #find checkpoints still needed and their manhattan distances
-
+    #sum manhattan dists for needed corners
     sum = 0
     for cp in corners:
         if cp not in cpVisited:
             xy1 = currentPosition
             xy2 = cp
             md = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-            cpNeeded.append((cp,md))
             sum = sum + md
-
-    #get closest first by sort
-    #cpNeeded.sort(key = lambda a: a[1])
-
-
-    return sum / 2 # Default to trivial solution
-
-    """
-    # DRAFT 1
-    currentPosition , cpVisited = state
-    return len(corners) - len(cpVisited) # Default to trivial solution
-    """
+    return sum / 2
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
