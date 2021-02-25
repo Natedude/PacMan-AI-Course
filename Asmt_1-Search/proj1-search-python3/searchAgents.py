@@ -478,7 +478,77 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    #check if first run
+    # so that i can save original num of food, to compare to how many gotten ???
+    # d = problem.heuristicInfo
+    # if 'first' not in d.keys():
+    #     #is first time
+    #     d['first'] = "value doesn't matter"
+    # else:
+
+
+    #get locations in list
+    #save and sum manhattan dists, from position, for needed checkpoints
+    foodLocations = []
+    # sumFromPos = 0
+    for i in range(foodGrid.width):
+        for j in range(foodGrid.height):
+            if foodGrid[i][j]:
+                foodLocations.append((i,j))
+    return len(foodLocations)
+
+
+"""
+#DRAFT 1
+#get locations in list
+foodLocations = []
+for i in range(foodGrid.width):
+    for j in range(foodGrid.height):
+        if foodGrid[i][j]:
+            foodLocations.append((i,j))
+
+#sum manhattan dists for needed corners
+sum = 0
+for food in foodLocations:
+    xy1 = position
+    xy2 = food
+    md = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    sum = sum + md
+return sum / 2
+"""
+
+"""
+#DRAFT 2
+
+#get locations in list
+#save and sum manhattan dists, from position, for needed checkpoints
+foodLocations = []
+sumFromPos = 0
+for i in range(foodGrid.width):
+    for j in range(foodGrid.height):
+        if foodGrid[i][j]:
+            #foodLocations.append((i,j))
+            xy1 = position
+            xy2 = (i,j)
+            md = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+            foodLocations.append((xy2,md))
+            sumFromPos = sumFromPos + md
+
+foodLocations.sort(key=lambda a:a[1])
+
+# now find MD to nearest cp, and then from there to next nearest, etc,
+# sum all these
+sumInOrder = 0
+currentP = position
+for loc in foodLocations:
+    xy1 = currentP
+    xy2, mdFromPos = loc
+    md = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+    sumInOrder = sumInOrder + md
+    currentP = xy2
+
+return sumInOrder
+"""
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
