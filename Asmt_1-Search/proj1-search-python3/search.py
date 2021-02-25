@@ -147,7 +147,7 @@ class Search:
         self.heuristic = heuristic
 
         print("***************************************************************************")
-        print("Start:", problem.getStartState())
+        #print("Start:", problem.getStartState())
         self.start = ( problem.getStartState(), [])
 
         #if UCS then give top priority, otherwise dont pass a priority
@@ -182,8 +182,8 @@ class Search:
 
             #check if goal
             if self.problem.isGoalState(currentPos):
-                print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
-                print("####################################\n")
+                #print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
+                #print("####################################\n")
                 #pprint.pprint(self.discoveryMap)
                 return actionList
 
@@ -208,6 +208,6 @@ class Search:
 
             #print()
 
-        print("No goal found :-(")
-        print("####################################")
+        #print("No goal found :-(")
+        #print("####################################")
         return stop

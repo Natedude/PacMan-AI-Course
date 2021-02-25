@@ -479,19 +479,10 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    #check if first run
-    # so that i can save original num of food, to compare to how many gotten ???
-    # d = problem.heuristicInfo
-    # if 'first' not in d.keys():
-    #     #is first time
-    #     d['first'] = "value doesn't matter"
-    # else:
-
 
     #get locations in list
     #save and sum manhattan dists, from position, for needed checkpoints
     foodLocations = []
-    # sumFromPos = 0
     for i in range(foodGrid.width):
         for j in range(foodGrid.height):
             if foodGrid[i][j]:
