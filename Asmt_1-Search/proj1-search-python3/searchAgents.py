@@ -324,12 +324,11 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
+        #get checkpoints visited list from state
         currentPosition , cpVisited = state
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            "*** YOUR CODE HERE ***"
             x,y = currentPosition
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
@@ -337,6 +336,8 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
                 nextCPV = cpVisited.copy()
+                # if it is a cp AND it is not already visited,
+                # append to the list included in the successor state
                 if nextPos in self.corners:
                     if nextPos not in cpVisited:
                         nextCPV.append(nextPos)
@@ -499,7 +500,8 @@ def foodHeuristic(state, problem):
 
 
 """
-#DRAFT 1
+#DRAFT 1 foodHeuristic - sum md from pos
+
 #get locations in list
 foodLocations = []
 for i in range(foodGrid.width):
@@ -518,7 +520,7 @@ return sum / 2
 """
 
 """
-#DRAFT 2
+#DRAFT 2 foodHeuristic - sum MDs in order from pos to dot to dot
 
 #get locations in list
 #save and sum manhattan dists, from position, for needed checkpoints
