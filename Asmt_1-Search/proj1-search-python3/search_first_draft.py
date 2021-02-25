@@ -27,6 +27,8 @@ n = Directions.NORTH
 e = Directions.EAST
 stop = Directions.STOP
 
+import pprint
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -118,14 +120,15 @@ def nullHeuristic(state, problem=None):
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
-    #print("Null Heuristic - Returning 0")
+    print("Null Heuristic - Returning 0")
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    # h = heuristic(problem.getStartState(), problem)
-    # print("Heuristic: " + str(h))
+    h = heuristic(problem.getStartState(), problem)
+
+    print("Heuristic: " + str(h))
 
     frontier = util.PriorityQueue()
     s = Search(problem, frontier, isUCS=True, heuristic=heuristic)
@@ -146,16 +149,16 @@ class Search:
         self.isUCS = isUCS
         self.heuristic = heuristic
 
-        print("***************************************************************************")
         print("Start:", problem.getStartState())
-        self.start = ( problem.getStartState(), [])
+        self.start = problem.getStartState()
 
-        #if UCS then give top priority, otherwise dont pass a priority
         if isUCS:
             self.frontier.push(self.start, 0)
         else:
             self.frontier.push(self.start)
 
+        # dict[(x,y)] = ( parent (x,y) when discovered, action used to discover)
+        self.discoveryMap = {}
         # list of nodes visited
         self.explored = []
 
@@ -170,44 +173,51 @@ class Search:
 
     def search(self):
         while not self.frontier.isEmpty():
-            currentPos, actionList = self.frontier.pop() #TODO (currentPos, currentPathList)
-            # print("Popped: (" + str(currentPos) +
-            #       " , " + str(actionList) + ")")
+            currentState = self.frontier.pop()
+            print("Popped: " + str(currentState) + " " + str(type(currentState)))
 
             # check is already explored
-            if currentPos in self.explored:
-                #print()
+            if currentState in self.explored:
+                print()
                 continue
-            self.explored.append(currentPos)
+            self.explored.append(currentState)
 
             #check if goal
-            if self.problem.isGoalState(currentPos):
+            if self.problem.isGoalState(currentState):
                 print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
                 print("####################################\n")
                 #pprint.pprint(self.discoveryMap)
-                return actionList
+                return self.path(currentState)
 
-            successors = self.problem.getSuccessors(currentPos)
+            successors = self.problem.getSuccessors(currentState)
 
-            #print("Successors: ")
+            print("Successors: ")
             #print(str(type(successors)))
             #print()
             for suc in successors:
                 pos, action, cost = suc
-                #print("Action: " + str(action))
-                newPathList = actionList.copy()
-                newPathList.append(action)
-                state = (pos, newPathList)
-                #print("Pushing: (" + str(pos) + " , " + str(newPathList) + ")")
-                if self.isUCS:
-                    priority = self.problem.getCostOfActions(newPathList) + self.heuristic(pos,self.problem)
-                    #print("\t Priority: " + str(priority))
-                    self.frontier.push(state, priority)
+                if pos not in self.discoveryMap.keys():
+                    self.discoveryMap[pos] = (currentState, action, cost)
+                    #print suc added to disc
+                    print(str(pos) + " added to discoveryMap with values:\n (" +
+                        str(currentState) + ", " + str(action) + ")")
+                    if self.isUCS:
+                        self.frontier.push(pos, cost + self.heuristic(pos,self.problem))
+                    else:
+                        self.frontier.push(pos)
                 else:
-                    self.frontier.push(state)
-
-            #print()
+                    print(str(pos) + " NOT ADDED - already in discoveryMap")
+            print()
 
         print("No goal found :-(")
         print("####################################")
         return stop
+
+    def path(self, pos):
+        p = []
+        while pos != self.start:
+            parent, action, cost = self.discoveryMap[pos]
+            p.insert(0, action)
+            pos = parent
+        print("Path: \n" + str(p) + "\n")
+        return p
