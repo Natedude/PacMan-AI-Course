@@ -336,10 +336,9 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
                 nextCPV = cpVisited.copy()
-                # if it is a cp AND it is not already visited,
+                # if it is an UNvisited corner,
                 # append to the list included in the successor state
-                if nextPos in self.corners:
-                    if nextPos not in cpVisited:
+                if nextPos in self.corners and nextPos not in cpVisited:
                         nextCPV.append(nextPos)
                 successors.append( ((nextPos, nextCPV), action, self.costFn((nextx,nexty)))  )
 
@@ -380,12 +379,20 @@ def cornersHeuristic(state, problem):
     currentPosition , cpVisited = state
     #sum manhattan dists for needed corners
     sum = 0
+    #l = [] #
     for cp in corners:
         if cp not in cpVisited:
             xy1 = currentPosition
             xy2 = cp
             md = abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+            #l.append(md) #
             sum = sum + md
+
+    # l.sort(reverse=True) #
+    # print(l)
+    # if len(l) > 0:
+    #     return l[0]
+    # return 0
     return sum / 2
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

@@ -147,7 +147,7 @@ class Search:
         self.heuristic = heuristic
 
         print("***************************************************************************")
-        #print("Start:", problem.getStartState())
+        print("Start:", problem.getStartState())
         self.start = ( problem.getStartState(), [])
 
         #if UCS then give top priority, otherwise dont pass a priority
@@ -172,42 +172,44 @@ class Search:
         while not self.frontier.isEmpty():
             currentPos, actionList = self.frontier.pop() #TODO (currentPos, currentPathList)
             # print("Popped: (" + str(currentPos) +
-            #       " , " + str(actionList) + ")")
+            #        " , " + str(actionList) + ")")
+            print("*************************************")
+            print("*** Popped: state = " + str(currentPos) )
 
             # check is already explored
             if currentPos in self.explored:
-                #print()
+                print()
                 continue
             self.explored.append(currentPos)
 
             #check if goal
             if self.problem.isGoalState(currentPos):
-                #print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
-                #print("####################################\n")
+                print("GOAL FOUND!!!!!!!!!!!!!!!!!!!!!!!!!!! :-) ")
+                print("####################################\n")
                 #pprint.pprint(self.discoveryMap)
                 return actionList
 
             successors = self.problem.getSuccessors(currentPos)
 
-            #print("Successors: ")
+            print("\nSuccessors: ")
             #print(str(type(successors)))
-            #print()
+            print()
             for suc in successors:
                 pos, action, cost = suc
                 #print("Action: " + str(action))
                 newPathList = actionList.copy()
                 newPathList.append(action)
                 state = (pos, newPathList)
-                #print("Pushing: (" + str(pos) + " , " + str(newPathList) + ")")
+                print("--> Pushing: (" + str(pos) + " , " + str(newPathList) + ")")
                 if self.isUCS:
                     priority = self.problem.getCostOfActions(newPathList) + self.heuristic(pos,self.problem)
-                    #print("\t Priority: " + str(priority))
+                    print("\t Priority: " + str(priority))
                     self.frontier.push(state, priority)
                 else:
                     self.frontier.push(state)
 
-            #print()
+            print()
 
-        #print("No goal found :-(")
-        #print("####################################")
+        print("No goal found :-(")
+        print("####################################")
         return stop
