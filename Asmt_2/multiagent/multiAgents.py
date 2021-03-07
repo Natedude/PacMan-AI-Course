@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -72,9 +72,88 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        #more
+        newNumFood = successorGameState.getNumFood()
+
+        #info from current state
+        ghostPos = currentGameState.getGhostPositions()
+        capsulePos = currentGameState.getCapsules()
+        walls = currentGameState.getWalls()
+        numFood = currentGameState.getNumFood()
+        curPos = currentGameState.getPacmanPosition()
+
+        #prep
+        foodList = self.grid2List(currentGameState.getFood())
+        #print(str(len(foodList)))
+
+        #add 1 if new eats a food
+        #go towards nearest food unless 1 move from a ghost
+        score = 0
+
+        #figure out if moving away from nearest ghost
+        curDistGhost = self.findClosest(curPos,ghostPos)[0]
+        newDistGhost = self.findClosest(newPos,ghostPos)[0]
+        deltaDistGhost = newDistGhost - curDistGhost
+        #print("Ghost delta: " + str(deltaDistGhost))
+
+        # #figure out if moving towards nearest food
+        distFood, closestFoodPos = self.findClosest(curPos, foodList)
+        newDistFood = self.dist(newPos,closestFoodPos)
+        deltaDistFood = distFood - newDistFood
+        # print("Food current dist:" +  str(distFood))
+        # print("Food new dist:" +  str(newDistFood))
+        # print("Food delta:" +  str(deltaDistFood))
+
+        #score = deltaDistGhost * successorGameState.getScore()
+        if newDistGhost > 2:
+            score = successorGameState.getScore()
+        else:
+            score = deltaDistGhost
+        #if self.isOneAwayFromGhost(newPos, ghostPos):
+            #score = -1
+            #score += (1/(newNumFood + 1)) + (1/(self.findClosestDistance(newPos,ghostPos) + 1))
+        #else:
+        #    score = -1
+
+        #return successorGameState.getScore()
+        return score
+
+    def dist(self, a, b):
+        return ( (a[0] - b[0])**2 + (a[1] - b[1]) ** 2 ) ** 0.5
+
+    #return true if pacman position is one move away from a ghost
+    #ghostPos is a list of tuples
+    def isOneAwayFromGhost(self, pacmanPos, ghostPos):
+        for g in ghostPos:
+            dist = self.dist(pacmanPos, g)
+            if dist <= (2 ** 0.5):
+                print("* One Away: " + str(dist))
+                return True
+        return False
+
+    #returns distance to closest pos in list and pos in a tuple
+    def findClosest(self, pacmanPos, listOfPos):
+        if len(listOfPos) == 0:
+            print("ERROR")
+            return 0.01
+        mini = listOfPos[0]
+        minDist = self.dist(pacmanPos, listOfPos[0])
+        if len(listOfPos) > 1:
+            for c in listOfPos[1:]:
+                dist = self.dist(pacmanPos,c)
+                if dist < minDist:
+                    mini = c
+                    minDist = dist
+        ret =  (minDist, mini)
+        #print("findClosest: " + str(ret))
+        return ret
+
+    #returns list of the position tuples that are true
+    def grid2List(self, grid):
+        grid = grid.asList()
+        return [ (col, row) for col in range(len(grid)) for row in range(len(grid[col])) if grid[col][row] ]
+
 
 def scoreEvaluationFunction(currentGameState):
     """
