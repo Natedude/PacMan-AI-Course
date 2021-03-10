@@ -13,10 +13,13 @@
 
 
 from util import manhattanDistance
-from game import Directions
+from game import Directions, Game
 import random, util
-
 from game import Agent
+
+#added
+from pacman import GameState
+import itertools
 
 class ReflexAgent(Agent):
     """
@@ -215,6 +218,62 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
+
+    # minimax algo for specified depth and starting state
+    # returns float score
+    def minimax(self, currentState : GameState, depth, agentIndex) -> float:
+        #base cases
+        if depth == 0 or currentState.isWin() or currentState.isLose():
+            return self.evaluationFunction(currentState)
+
+        if agentIndex == 0:
+            val = float('-inf')
+            actions = currentState.getLegalActions()
+            for a in actions:
+                newState = currentState.generateSuccessor(agentIndex, a)
+                retVal = self.minimax(newState, depth - 1, agentIndex) #wrong agent index, must increment
+                val = max(val, retVal)
+
+        return 0 #TODO
+
+    # returns a list of game states
+    # each state represents one combination where all ghosts have moved
+    # the length of the list should equal the product of the legal move counts of each ghost
+    def getGhostCombinations(self, state : GameState):
+        listOfActionLists = []
+        ghostCount = state.getNumAgents() - 1
+        for i in range(1, ghostCount + 1):
+            actions = state.getLegalActions(i)
+            listOfActionLists.append(actions)
+        combos = list(itertools.product(*listOfActionLists))
+        print("combos : ")
+        for c in combos:
+            print(c)
+
+        # TODO
+        # found slides about multiple minimizers,
+        # also see about splitting the min and max
+        # into their own functions
+        # - also maybe finish this collaberative method attempt
+
+
+    # # return a list of all combos of actions
+    # # not returning states
+    # # actionsMap ---> input
+    # # currentCombo
+    # # ghostCount ----> size of a combination
+    # # listCombos ----> list of lists, each contains one action from each ghost
+    # def combo(self, actionsMap, currentCombo, ghostCount, start, end, index, listCombos):
+    #     #save if ready
+    #     if index == ghostCount:
+    #         listCombos.append(currentCombo)
+
+    #     i = start
+    #     while i <= end and end - i + 1 >= ghostCount - i :
+    #         currentCombo[index] = actionsMap[i]
+
+
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
