@@ -218,33 +218,34 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        self.minimaxRunCount = 0
+        # self.minimaxRunCount = 0
         numAgents = gameState.getNumAgents()
-        print('------------------------------------------')
-        print('numAgents ' + str(numAgents))
+        # print('------------------------------------------')
+        # print('numAgents ' + str(numAgents))
         self.actions = []
         self.minimax(gameState, self.depth, 0, numAgents)
-        print('list: ' + str(self.actions))
+        # print('list: ' + str(self.actions))
         self.actions.sort(reverse=True)
-        print('getAction: returning ' + str(self.actions[0]))
+        # print('getAction: returning ' + str(self.actions[0]))
         return self.actions[0][1]
 
     # minimax algo for specified depth and starting state
     # returns float score
     def minimax(self, currentState : GameState, depth, agentIndex, numAgents) -> float:
-        print('Minimax: count: ' + str(self.minimaxRunCount) +
-              ' agentIndex: ' + str(agentIndex) +
-              ' depth:' + str(depth))
-        self.minimaxRunCount += 1
+        # print('Minimax: count: ' + str(self.minimaxRunCount) +
+        #       ' agentIndex: ' + str(agentIndex) +
+        #       ' depth:' + str(depth))
+        # self.minimaxRunCount += 1
 
         newDepth = depth
+        #if last agent, next is a new depth
         if agentIndex == numAgents - 1:
             newDepth -= 1
 
         #base cases
         if depth == 0 or currentState.isWin() or currentState.isLose():
             val = self.evaluationFunction(currentState)
-            print('terminal: returning ' + str(val))
+            # print('terminal: returning ' + str(val))
             return val
 
         if agentIndex == 0:
@@ -255,15 +256,12 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 newState = currentState.generateSuccessor(agentIndex, a)
                 newAgentIndex = (agentIndex + 1 ) % numAgents
                 retVal = self.minimax(newState, newDepth, newAgentIndex, numAgents)
-                print('recieved: ' + str(retVal))
-                print('val:' + str(val))
+                # print('recieved: ' + str(retVal))
+                # print('val:' + str(val))
                 val = max(val, retVal)
+                #if root node, save actions and returned scores
                 if depth == self.depth:
-                    # TODO each terminal is returning the correct value but
-                    # it is not filtering up the tree correctly.
-                    # seems like max function is incorrectly comparing between the
-                    # previous action's max and the retVal.
-                    self.actions.append( (val, a) )
+                    self.actions.append( (retVal, a) )
                     print('action: ' + a)
         else:
             # if ghost, minimize score
