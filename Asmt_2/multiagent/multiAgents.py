@@ -217,24 +217,64 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        self.minimaxRunCount = 0
+        numAgents = gameState.getNumAgents()
+        print('------------------------------------------')
+        print('numAgents ' + str(numAgents))
+        self.actions = []
+        self.minimax(gameState, self.depth, 0, numAgents)
+        print('list: ' + str(self.actions))
+        self.actions.sort(reverse=True)
+        print('getAction: returning ' + str(self.actions[0]))
+        return self.actions[0][1]
 
     # minimax algo for specified depth and starting state
     # returns float score
-    def minimax(self, currentState : GameState, depth, agentIndex) -> float:
+    def minimax(self, currentState : GameState, depth, agentIndex, numAgents) -> float:
+        print('Minimax: count: ' + str(self.minimaxRunCount) +
+              ' agentIndex: ' + str(agentIndex) +
+              ' depth:' + str(depth))
+        self.minimaxRunCount += 1
+
+        newDepth = depth
+        if agentIndex == numAgents - 1:
+            newDepth -= 1
+
         #base cases
         if depth == 0 or currentState.isWin() or currentState.isLose():
-            return self.evaluationFunction(currentState)
+            val = self.evaluationFunction(currentState)
+            print('terminal: returning ' + str(val))
+            return val
 
         if agentIndex == 0:
+            # if pacman, maximize score
             val = float('-inf')
-            actions = currentState.getLegalActions()
+            actions = currentState.getLegalActions(agentIndex)
             for a in actions:
                 newState = currentState.generateSuccessor(agentIndex, a)
-                retVal = self.minimax(newState, depth - 1, agentIndex) #wrong agent index, must increment
+                newAgentIndex = (agentIndex + 1 ) % numAgents
+                retVal = self.minimax(newState, newDepth, newAgentIndex, numAgents)
+                print('recieved: ' + str(retVal))
+                print('val:' + str(val))
                 val = max(val, retVal)
-
-        return 0 #TODO
+                if depth == self.depth:
+                    # TODO each terminal is returning the correct value but
+                    # it is not filtering up the tree correctly.
+                    # seems like max function is incorrectly comparing between the
+                    # previous action's max and the retVal.
+                    self.actions.append( (val, a) )
+                    print('action: ' + a)
+        else:
+            # if ghost, minimize score
+            val = float('inf')
+            actions = currentState.getLegalActions(agentIndex)
+            for a in actions:
+                newState = currentState.generateSuccessor(agentIndex, a)
+                newAgentIndex = (agentIndex + 1 ) % numAgents
+                retVal = self.minimax(newState, newDepth, newAgentIndex, numAgents)
+                val = min(val, retVal)
+        return val
 
     # returns a list of game states
     # each state represents one combination where all ghosts have moved
