@@ -262,7 +262,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 #if root node, save actions and returned scores
                 if depth == self.depth:
                     self.actions.append( (retVal, a) )
-                    print('action: ' + a)
+                    #print('action: ' + a)
         else:
             # if ghost, minimize score
             val = float('inf')
