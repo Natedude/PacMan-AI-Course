@@ -274,45 +274,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 val = min(val, retVal)
         return val
 
-    # returns a list of game states
-    # each state represents one combination where all ghosts have moved
-    # the length of the list should equal the product of the legal move counts of each ghost
-    def getGhostCombinations(self, state : GameState):
-        listOfActionLists = []
-        ghostCount = state.getNumAgents() - 1
-        for i in range(1, ghostCount + 1):
-            actions = state.getLegalActions(i)
-            listOfActionLists.append(actions)
-        combos = list(itertools.product(*listOfActionLists))
-        print("combos : ")
-        for c in combos:
-            print(c)
-
-        # TODO
-        # found slides about multiple minimizers,
-        # also see about splitting the min and max
-        # into their own functions
-        # - also maybe finish this collaberative method attempt
-
-
-    # # return a list of all combos of actions
-    # # not returning states
-    # # actionsMap ---> input
-    # # currentCombo
-    # # ghostCount ----> size of a combination
-    # # listCombos ----> list of lists, each contains one action from each ghost
-    # def combo(self, actionsMap, currentCombo, ghostCount, start, end, index, listCombos):
-    #     #save if ready
-    #     if index == ghostCount:
-    #         listCombos.append(currentCombo)
-
-    #     i = start
-    #     while i <= end and end - i + 1 >= ghostCount - i :
-    #         currentCombo[index] = actionsMap[i]
-
-
-
-
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
