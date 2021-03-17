@@ -71,53 +71,27 @@ class ReflexAgent(Agent):
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
         newPos = successorGameState.getPacmanPosition()
-        # newFood = successorGameState.getFood()
-        # newGhostStates = successorGameState.getGhostStates()
-        # newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-        "*** YOUR CODE HERE ***"
-        #more
-        # newNumFood = successorGameState.getNumFood()
 
         #info from current state
         ghostPos = currentGameState.getGhostPositions()
-        # capsulePos = currentGameState.getCapsules()
-        # walls = currentGameState.getWalls()
-        # numFood = currentGameState.getNumFood()
         curPos = currentGameState.getPacmanPosition()
-
-        #prep
 
         #figure out if moving away from nearest ghost
         curDistGhost = self.findClosest(curPos,ghostPos)[0]
         newDistGhost = self.findClosest(newPos,ghostPos)[0]
         deltaDistGhost = newDistGhost - curDistGhost
-        #print("Ghost delta: " + str(deltaDistGhost))
 
         # #figure out if moving towards nearest food
         foodList = currentGameState.getFood().asList()
         distFood, closestFoodPos = self.findClosest(curPos, foodList)
         newDistFood = self.dist(newPos,closestFoodPos)
         deltaDistFood = distFood - newDistFood
-        # print('curPos: ' + str(curPos) )
-        # print('newPos: ' + str(newPos) )
-        # print('closestFoodPos: ' + str(closestFoodPos))
-        # print('distFood: ' + str(distFood))
-        # print('newDistFood: ' + str(newDistFood))
-        # print('deltaDistFood: ' + str(deltaDistFood))
-        # print('----------------------')
 
         if newDistGhost > 2:
-            # score = successorGameState.getScore()
             score = deltaDistFood
         else:
             score = deltaDistGhost
-        #if self.isOneAwayFromGhost(newPos, ghostPos):
-            #score = -1
-            #score += (1/(newNumFood + 1)) + (1/(self.findClosestDistance(newPos,ghostPos) + 1))
-        #else:
-        #    score = -1
 
-        #return successorGameState.getScore()
         return score
 
     @staticmethod
@@ -318,30 +292,29 @@ def betterEvaluationFunction(currentGameState:GameState):
     evaluation function (question 5).
 
     # DESCRIPTION:
-    Give inf and -inf scores if win or lose. After that, I wanted
-    to choose a number of variables that I could multiply by weights and sum
-    to get a score that works better than the normal score. I thought it would
-    be cool to be able to play with the weights to find an optimal set of weights.
+        Give inf and -inf scores if win or lose. After that, I wanted
+        to choose a number of variables that I could multiply by weights and sum
+        to get a score that works better than the normal score. I thought it would
+        be cool to be able to play with the weights to find an optimal set of weights.
 
-    ## Variables:
-    ### Food: The food left uneaten and the distance to the nearest food should
-        both decrease the score. This encourages eating more food and getting closer to
-        the nearest food.
+        ### Food: The food left uneaten and the distance to the nearest food should
+            both decrease the score. This encourages eating more food and getting closer to
+            the nearest food.
 
-    ### Capsules: We want to subtract the number of capsules left uneaten from the score
-        so that Pacman will eat one if he gets a chance. I did not include a variable relating
-        the distance to the closest capsule so that Pacman wasn't constantly trying to chase them.
+        ### Capsules: We want to subtract the number of capsules left uneaten from the score
+            so that Pacman will eat one if he gets a chance. I did not include a variable relating
+            the distance to the closest capsule so that Pacman wasn't constantly trying to chase them.
 
-    ### Ghosts: I make lists of the scared ghosts and the active ghosts by checking their scaredTimer fields.
-        We want to minimize the distance to the closest scared ghost, so the larger the distance,
-        the more is subtracted from the score.
+        ### Ghosts: I make lists of the scared ghosts and the active ghosts by checking their scaredTimer fields.
+            We want to minimize the distance to the closest scared ghost, so the larger the distance,
+            the more is subtracted from the score.
 
-        The closer the closest ghost is, the lower the score should be. So we want to subtract the most
-        when the distance is smallest. The reciprocal of the distance is used for this.
-        Pacman wants to widen the distance to minimize the amount subtracted from the score.
+            The closer the closest ghost is, the lower the score should be. So we want to subtract the most
+            when the distance is smallest. The reciprocal of the distance is used for this.
+            Pacman wants to widen the distance to minimize the amount subtracted from the score.
 
-        With these two relations to ghosts, Pacman will be pulled towards scared ghosts,
-        but pushed away from active ghosts.
+            With these two relations to ghosts, Pacman will be pulled towards scared ghosts,
+            but pushed away from active ghosts.
 
 
     """
