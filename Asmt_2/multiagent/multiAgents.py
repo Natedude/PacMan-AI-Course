@@ -11,6 +11,18 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+#  _______          __  .__
+#  \      \ _____ _/  |_|  |__ _____    ____
+#  /   |   \\__  \\   __\  |  \\__  \  /    \
+# /    |    \/ __ \|  | |   Y  \/ __ \|   |  \
+# \____|__  (____  /__| |___|  (____  /___|  /
+#         \/     \/          \/     \/     \/
+#   ___ ___ .__.__       .___
+#  /   |   \|__|  |    __| _/_ __  _____
+# /    ~    \  |  |   / __ |  |  \/     \
+# \    Y    /  |  |__/ /_/ |  |  /  Y Y  \
+#  \___|_  /|__|____/\____ |____/|__|_|  /
+#        \/               \/           \/
 
 from util import manhattanDistance
 from game import Directions, Game
