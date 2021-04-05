@@ -38,6 +38,7 @@ nextState and Prob lists for each action from startStart:
  [((1, 0), 0.8), ((0, 1), 0.1), ((0, 0), 0.1)]]
 """
 
+
 import mdp, util
 from mdp import MarkovDecisionProcess
 from pprint import pprint
@@ -73,17 +74,49 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter()  # A Counter is a dict with default 0
-        for i in range(iterations):
-            self.runValueIteration()
+        self.runValueIteration()
 
     def runValueIteration(self):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        values = self.values.copy()
         states = self.mdp.getStates()
-        for s in states:
-            values[s] = self.best(s)[0]
-        self.values = values
+
+        # TODO maybe do a verify, like line 20 in psuedocode
+        # Make V = list of vectors, 0 through k, over S
+        # save to self.values at end of iteration?
+        # start at k = 1
+        # make V1, using self.values[s] to get the 0s
+
+        # v vector of all state values for this k
+        v = []
+        # for each state, do Bellman Update
+        for s in states[1:]: #ignore terminal state
+            actions = self.mdp.getPossibleActions(s)
+            # need a weighted av for each action
+            # each wAv corresponds to a transition (s,a,s')
+            wAvList = [] # holds (action,wAv)
+            for a in actions:
+                # find all the transitions for each action
+                # and do weighted av of them
+                wAv = 0
+                nextStateAndProbPairList = self.mdp.getTransitionStatesAndProbs(s,a)
+                for transition in nextStateAndProbPairList:
+                    # t[ r + V_k-1(s') ] and add to wAv
+                    # print('transition: '+str(transition))
+                    sPrime, t = transition
+                    # V_k-1(s')
+                    valPrev = self.values[sPrime]
+                    r = self.mdp.getReward(s,a,sPrime)
+                    # print('r: ' + str(r))
+                    wAv += t * (r + valPrev)
+                wAvList.append( (wAv,a) )
+            wAvList.sort(reverse=True)
+            # print('\n'+ str(s) + ' - wAvList:')
+            # print(wAvList)
+            # print('first:' + str(wAvList[0]))
+            v.append(wAvList[0])
+        print(v)
+
 
     def getValue(self, state):
         """
@@ -97,17 +130,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        wAv = 0 #weighted average
-        nextStateAndProbPairList = \
-            self.mdp.getTransitionStatesAndProbs(state,action)
-        for transition in nextStateAndProbPairList:
-            # t[ r + V_k-1(s') ] and add to wAv
-            sPrime, t = transition
-            # V_k-1(s')
-            valPrev = self.values[sPrime]
-            r = self.mdp.getReward(state,action,sPrime)
-            wAv += t * (r + self.discount * valPrev)
-        return wAv
+        util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
         """
@@ -119,23 +142,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        return self.best(state)[1]
-
-    def best(self, state) -> tuple:
-        """
-        Compute Q value, equivalent to a weighted average
-        with probabilities as weights,
-        for a state and each of its possible actions.
-        Return max Q-value tuple (Q-value,action).
-        """
-        actions = self.mdp.getPossibleActions(state)
-        if len(actions) == 0:
-            return (0, None)
-        wAvList = []
-        for a in actions:
-            wAvList.append((self.computeQValueFromValues(state, a),a))
-        wAvList.sort(reverse=True)
-        return wAvList[0]
+        util.raiseNotDefined()
+        # pass
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
