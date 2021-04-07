@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -16,7 +16,8 @@ from game import *
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
 
-import random,util,math
+import random, util, math
+
 
 class QLearningAgent(ReinforcementAgent):
     """
@@ -38,11 +39,13 @@ class QLearningAgent(ReinforcementAgent):
         - self.getLegalActions(state)
           which returns legal actions for a state
     """
+
     def __init__(self, **args):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        self.QValues = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -51,8 +54,20 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.QValues[(state, action)]
+        # util.raiseNotDefined() # how similar to last one is it?
 
+    def findBest(self, state):
+        # find max val and action at same time and return both
+        actions = self.getLegalActions(state)
+        if len(actions) == 0:
+            return (0.0, None)
+        best = (self.getQValue(state, actions[0]), actions[0])
+        for a in actions[1:]:
+            val = self.getQValue(state, a)
+            if val > best[0]:
+                best = (val, a)
+        return best
 
     def computeValueFromQValues(self, state):
         """
@@ -62,7 +77,7 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.findBest(state)[0]
 
     def computeActionFromQValues(self, state):
         """
@@ -71,7 +86,7 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.findBest(state)[1]
 
     def getAction(self, state):
         """
@@ -88,8 +103,11 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        if len(legalActions) > 0:
+          if util.flipCoin(self.epsilon):
+            action = random.choice(legalActions)
+          else:
+            action = self.getPolicy(state)
         return action
 
     def update(self, state, action, nextState, reward):
@@ -102,7 +120,12 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        sample = reward + self.discount * self.getValue(nextState)
+        self.QValues[(state,action)] = \
+          (1 - self.alpha) * self.getQValue(state,action) + \
+            self.alpha * sample
+
+
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
@@ -114,7 +137,7 @@ class QLearningAgent(ReinforcementAgent):
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
 
-    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, **args):
+    def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, numTraining=0, **args):
         """
         These default parameters can be changed from the pacman.py command line.
         For example, to change the exploration rate, try:
@@ -125,10 +148,10 @@ class PacmanQAgent(QLearningAgent):
         gamma    - discount factor
         numTraining - number of training episodes, i.e. no learning after these many episodes
         """
-        args['epsilon'] = epsilon
-        args['gamma'] = gamma
-        args['alpha'] = alpha
-        args['numTraining'] = numTraining
+        args["epsilon"] = epsilon
+        args["gamma"] = gamma
+        args["alpha"] = alpha
+        args["numTraining"] = numTraining
         self.index = 0  # This is always Pacman
         QLearningAgent.__init__(self, **args)
 
@@ -138,8 +161,8 @@ class PacmanQAgent(QLearningAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action = QLearningAgent.getAction(self,state)
-        self.doAction(state,action)
+        action = QLearningAgent.getAction(self, state)
+        self.doAction(state, action)
         return action
 
 
@@ -151,7 +174,8 @@ class ApproximateQAgent(PacmanQAgent):
        and update.  All other QLearningAgent functions
        should work as is.
     """
-    def __init__(self, extractor='IdentityExtractor', **args):
+
+    def __init__(self, extractor="IdentityExtractor", **args):
         self.featExtractor = util.lookup(extractor, globals())()
         PacmanQAgent.__init__(self, **args)
         self.weights = util.Counter()
