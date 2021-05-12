@@ -57,10 +57,7 @@ class PerceptronModel(object):
         Train the perceptron until convergence.
         """
         "*** YOUR CODE HERE ***"
-        # y is the actual label for current point.  either 1 or -1
-        # y(x⋅w) is prediction (x.w) times y. can be less than or equal to 0
-        #   only if the real label y is different than the predicted label ϕ(x⋅w)
-        # y - y = pos, y - not-y = neg ?
+        # Note: y is the actual label for current point.  either 1 or -1
         while True:
             # set break condition
             mismatch = False

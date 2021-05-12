@@ -6,7 +6,7 @@
 
 ## Implementation
 
-### Q1,2,3
+### Q1,2,31
 
 At first I tried to do the entire value iteration in one method, not realizing the compute___ methods were there to spread out the work of the algorithm in some clever ways. Once I realized how to use the two compute___ methods, I then also realized I could make the best(s) method. The best(s) method condenses the work of finding weighted averages, max, and argMax values. This simplified other methods and avoided repeat code.
 
