@@ -1,4 +1,5 @@
 import nn
+import backend
 
 class PerceptronModel(object):
     def __init__(self, dimensions):
@@ -27,6 +28,15 @@ class PerceptronModel(object):
         Returns: a node containing a single number (the score)
         """
         "*** YOUR CODE HERE ***"
+        # (batch_size x num_features) * (1 x num_features)
+
+        # Usage: nn.DotProduct(features, weights) ????? backwards
+        # Inputs:
+        #     features: a Node with shape (batch_size x num_features)
+        #     weights: a Node with shape (1 x num_features)
+        # Output: a Node with shape (batch_size x 1)
+        dot = nn.DotProduct(self.w, x)
+        return dot
 
     def get_prediction(self, x):
         """
@@ -35,12 +45,37 @@ class PerceptronModel(object):
         Returns: 1 or -1
         """
         "*** YOUR CODE HERE ***"
+        dot = self.run(x)
+        scalar = nn.as_scalar(dot)
+        if scalar < 0 :
+            return -1
+        else:
+            return 1
 
     def train(self, dataset):
         """
         Train the perceptron until convergence.
         """
         "*** YOUR CODE HERE ***"
+        # y is the actual label for current point.  either 1 or -1
+        # y(x⋅w) is prediction (x.w) times y. can be less than or equal to 0
+        #   only if the real label y is different than the predicted label ϕ(x⋅w)
+        # y - y = pos, y - not-y = neg ?
+        while True:
+            # set break condition
+            mismatch = False
+            for x, y in dataset.iterate_once(1):
+                # x shape: 1x3  --  y shape: 1x1
+                # print("\(" + str(x) + ", " + str(y) + "\)")
+                prediction = self.get_prediction(x)
+                if nn.as_scalar(y) != prediction:
+                    # FAIL - prediction doesnt match data
+                    mismatch = True
+                    # w = w + yx update
+                    nn.Parameter.update(self.w, x, nn.as_scalar(y))
+            if not mismatch: #accurate_100:
+                # if 100% accurate after going through entire dataset, break
+                break
 
 class RegressionModel(object):
     """
