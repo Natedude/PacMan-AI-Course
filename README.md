@@ -1,2 +1,2 @@
-# CSC 665 AI
- CSC 665 AI SFSU Spring 2021
+# SFSU Class Covering Berkeley PacMan AI Course
+- http://ai.berkeley.edu/project_overview.html
